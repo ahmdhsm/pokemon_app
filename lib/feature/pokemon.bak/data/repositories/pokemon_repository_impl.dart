@@ -1,8 +1,7 @@
 import 'package:dio/dio.dart';
-import 'package:pokemon_app/feature/pokemon/domain/entities/pokemon_entity.dart';
+import 'package:pokemon_app/feature/pokemon.bak/domain/entities/pokemon_entity.dart';
 import 'package:pokemon_app/core/error/failure.dart';
-import 'package:dartz/dartz.dart';
-import 'package:pokemon_app/feature/pokemon/domain/repositories/pokemon_repository.dart';
+import 'package:pokemon_app/feature/pokemon.bak/domain/repositories/pokemon_repository.dart';
 
 import '../models/pokemon_model.dart';
 

@@ -1,4 +1,4 @@
-import 'package:pokemon_app/feature/pokemon/domain/entities/pokemon_entity.dart';
+import 'package:pokemon_app/feature/pokemon.bak/domain/entities/pokemon_entity.dart';
 
 class PokemonModel extends PokemonEntity {
   const PokemonModel({

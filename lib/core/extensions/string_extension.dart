@@ -1,5 +1,12 @@
 extension StringExtension on String {
   String toCamelCase() {
-    return "${this[0].toUpperCase()}${this.substring(1).toLowerCase()}";
+    String data = this;
+    String finalData = '';
+    data = data.replaceAll('-', ' ');
+    // return data;
+    for (var tes in data.split(' ')) {
+      finalData += "${tes[0].toUpperCase()}${tes.substring(1).toLowerCase()} ";
+    }
+    return finalData;
   }
 }

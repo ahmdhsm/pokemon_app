@@ -2,9 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:pokemon_app/core/extensions/string_extension.dart';
 import 'package:pokemon_app/core/usecase/usecase.dart';
-import 'package:pokemon_app/feature/pokemon/data/models/pokemon_model.dart';
-import 'package:pokemon_app/feature/pokemon/data/repositories/pokemon_repository_impl.dart';
-import 'package:pokemon_app/feature/pokemon/domain/entities/pokemon_entity.dart';
+import 'package:pokemon_app/feature/pokemon.bak/data/models/pokemon_model.dart';
+import 'package:pokemon_app/feature/pokemon.bak/data/repositories/pokemon_repository_impl.dart';
+import 'package:pokemon_app/feature/pokemon.bak/domain/entities/pokemon_entity.dart';
 import 'dart:math' as math;
 
 import '../../domain/usecases/get_pokemon_list_usecase.dart';

@@ -1,13 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:pokemon_app/feature/pokemon/presentation/pages/pokemon_home_page.dart';
+import 'package:pokemon_app/feature/pokemon/presentation/notifier/pokemon_detail_notifier.dart';
+import 'package:pokemon_app/feature/pokemon/presentation/notifier/pokemon_list_notifier.dart';
+import 'package:pokemon_app/feature/pokemon/presentation/pages/pokemon_detail_page.dart';
 
-import 'feature/pokemon/presentation/pages/pokemon_detail_page.dart';
+import 'feature/pokemon/presentation/pages/pokemon_home.dart';
+
+final getIt = GetIt.instance;
 
 void main() async {
-  await Hive.initFlutter();
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  getIt.registerSingleton<PokemonListNotifier>(PokemonListNotifier());
+  getIt.registerSingleton<PokemonDetailNotifier>(PokemonDetailNotifier());
+  runApp(
+    MyApp(),
+  );
 }
 
 class MyApp extends StatelessWidget {
