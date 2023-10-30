@@ -29,7 +29,11 @@ class _MovesWidgetState extends State<MovesWidget>
             child: Wrap(
               children: [
                 for (int i = 0; i < tes.pokemonDetail!.moves.length; i++)
-                  PokemonTypeWidget(type: tes.pokemonDetail!.moves[i], index: i)
+                  PokemonTypeWidget(
+                    type: tes.pokemonDetail!.moves[i],
+                    index: i,
+                    withAnimation: false,
+                  )
               ],
             ),
           ),

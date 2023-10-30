@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get_it_mixin/get_it_mixin.dart';
 import 'package:pokemon_app/core/extensions/string_extension.dart';
 import 'package:pokemon_app/core/usecase/usecase.dart';
@@ -170,6 +171,59 @@ class _PokemonHomePageState extends State<PokemonHomePage>
             ),
           ),
         ],
+      ),
+      bottomNavigationBar: Container(
+        height: 70,
+        decoration: BoxDecoration(
+          color: Colors.blue,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(15),
+            topRight: Radius.circular(15),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: EdgeInsets.only(top: 10),
+              height: 50,
+              width: 100,
+              child: Center(
+                child: FaIcon(
+                  FontAwesomeIcons.solidHeart,
+                  color: Colors.grey,
+                  size: 30,
+                ),
+              ),
+            ),
+            Container(
+              // padding: EdgeInsets.only(top: ),
+              height: 60,
+              width: 100,
+              child: Center(
+                child: Image.asset(
+                  'assets/images/pokeball.png',
+                  // color: Colors.black.withOpacity(0.1),
+                  // fit: BoxFit.none,
+                  width: 40,
+                ),
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.only(top: 10),
+              height: 50,
+              width: 100,
+              child: Center(
+                child: FaIcon(
+                  FontAwesomeIcons.solidUser,
+                  color: Colors.grey,
+                  size: 30,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
