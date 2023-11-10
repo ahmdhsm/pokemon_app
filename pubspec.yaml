@@ -18,7 +18,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.17.5 <3.0.0"
+  sdk: '>=3.1.4 <4.0.0'
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -27,34 +27,24 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-  auto_animated: ^3.1.0
   cached_network_image: ^3.2.1
-  cupertino_icons: ^1.0.2
   dio: ^4.0.6
-  equatable: ^2.0.5
   flutter:
     sdk: flutter
-  flutter_bloc: ^8.1.1
   flutter_svg: ^1.1.5
-  font_awesome_flutter: ^10.4.0
   fpdart: ^0.3.0
   get_it: ^7.2.0
-  get_it_mixin: ^3.1.4+2
-  google_fonts: ^3.0.1
-  objectbox: ^1.6.2
-  objectbox_flutter_libs: ^1.6.2
+  google_fonts: ^4.0.4
   path: ^1.8.2
   path_provider: ^2.0.11
-  percent_indicator: ^4.2.2
   pretty_dio_logger: ^1.1.1
   sembast: ^3.3.1
 
 dev_dependencies:
-  build_runner: ^2.3.2
   flutter_lints: ^2.0.0
   flutter_test:
     sdk: flutter
-  objectbox_generator: ^1.6.2
+  import_path_converter: ^1.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

@@ -1,20 +1,20 @@
 import 'package:flutter/foundation.dart';
-import 'package:pokemon_app/feature/pokemon/entities/pokemon_entity.dart';
-
-import '../../data/online_data.dart';
-import '../../usecases/get_data.dart';
+import 'package:pokemon_app/feature/pokemon/model/pokemon_list_model.dart';
+import 'package:pokemon_app/feature/pokemon/usecases/pokemon_list_usecase.dart';
 
 class PokemonListNotifier extends ChangeNotifier {
   PokemonListNotifier() {
-    tes();
+    getData();
   }
 
-  List<PokemonEntity> pokemonList = [];
+  final _pokemenListUseCase = PokemonListUsecase();
+
+  List<PokemonListModel> pokemonList = [];
   int offset = 0;
 
   bool isLoading = false;
 
-  void tes() async {
+  void getData() async {
     if (isLoading == true) {
       return;
     }
@@ -22,18 +22,36 @@ class PokemonListNotifier extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    var tes = await GetData().tes(offset);
-    await tes.fold(
+    if (offset == 0) {
+      var offlineData = await _pokemenListUseCase.getOfflinePokemonList(offset);
+      offlineData.fold(
+        (l) {},
+        (r) async {
+          if (r != null) {
+            await Future.delayed(const Duration(milliseconds: 500));
+            pokemonList.addAll(r);
+            isLoading = false;
+            notifyListeners();
+          }
+          return;
+        },
+      );
+      offset = 20;
+      return;
+    }
+
+    var onlineData = await _pokemenListUseCase.getPokemonDetail(offset);
+    await onlineData.fold(
       (l) {
         notifyListeners();
       },
       (r) async {
-        await Future.delayed(Duration(seconds: 1));
+        offset += 20;
+        await Future.delayed(const Duration(seconds: 1));
         pokemonList.addAll(r);
         notifyListeners();
       },
     );
-    offset += 20;
 
     isLoading = false;
     notifyListeners();

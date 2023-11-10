@@ -1,3 +1,1 @@
-class Failure {
-  Failure({List properties = const <dynamic>[]});
-}
+class Failure {}

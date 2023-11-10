@@ -3,10 +3,30 @@ extension StringExtension on String {
     String data = this;
     String finalData = '';
     data = data.replaceAll('-', ' ');
-    // return data;
-    for (var tes in data.split(' ')) {
-      finalData += "${tes[0].toUpperCase()}${tes.substring(1).toLowerCase()} ";
+
+    for (var text in data.split(' ')) {
+      finalData +=
+          "${text[0].toUpperCase()}${text.substring(1).toLowerCase()} ";
     }
     return finalData;
+  }
+
+  String baseStatLabel() {
+    switch (this) {
+      case 'hp':
+        return 'HP';
+      case 'attack':
+        return 'Attack';
+      case 'defense':
+        return 'Defense';
+      case 'special-attack':
+        return 'Sp. Attack';
+      case 'special-defense':
+        return 'Sp. Defense';
+      case 'speed':
+        return 'Speed';
+      default:
+        return '';
+    }
   }
 }

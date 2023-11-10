@@ -1,21 +1,11 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:get_it_mixin/get_it_mixin.dart';
-import 'package:pokemon_app/core/extensions/string_extension.dart';
-import 'package:pokemon_app/core/usecase/usecase.dart';
-import 'package:pokemon_app/feature/pokemon/data/online_data.dart';
-import 'package:pokemon_app/feature/pokemon/entities/pokemon_entity.dart';
-import 'package:pokemon_app/feature/pokemon/presentation/cubit/pokemon_list_cubit.dart';
-import 'package:pokemon_app/feature/pokemon/presentation/pages/pokemon_detail_page.dart';
-import 'package:pokemon_app/feature/pokemon/presentation/state/pokemon_list_state.dart';
 import 'dart:math' as math;
 
-import 'package:pokemon_app/feature/pokemon/usecases/get_data.dart';
-import 'package:pokemon_app/main.dart';
-
-import '../notifier/pokemon_list_notifier.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:pokemon_app/core/extensions/string_extension.dart';
+import 'package:pokemon_app/feature/pokemon/model/pokemon_list_model.dart';
+import 'package:pokemon_app/feature/pokemon/presentation/notifier/pokemon_list_notifier.dart';
+import 'package:pokemon_app/feature/pokemon/presentation/pages/pokemon_detail_page.dart';
 
 class PokemonHomePage extends StatefulWidget {
   const PokemonHomePage({super.key});
@@ -26,13 +16,9 @@ class PokemonHomePage extends StatefulWidget {
 
 class _PokemonHomePageState extends State<PokemonHomePage>
     with TickerProviderStateMixin {
-  static const Color grass = Color.fromRGBO(103, 111, 163, 1);
-  static const Color fire = Color.fromRGBO(244, 67, 54, 1);
-  static const Color water = Color.fromRGBO(33, 150, 243, 1);
+  final _pokemonListNotifier = PokemonListNotifier();
 
-  final PokemonListNotifier tes = PokemonListNotifier();
-
-  ScrollController _controller = ScrollController();
+  final _controller = ScrollController();
 
   AnimationController? animations;
 
@@ -40,7 +26,7 @@ class _PokemonHomePageState extends State<PokemonHomePage>
   void initState() {
     animations = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 1),
+      duration: const Duration(seconds: 1),
       value: 1,
     );
 
@@ -48,8 +34,7 @@ class _PokemonHomePageState extends State<PokemonHomePage>
       if (_controller.position.atEdge) {
         if (_controller.position.pixels ==
             _controller.position.maxScrollExtent) {
-          print('aaaa');
-          tes.tes();
+          _pokemonListNotifier.getData();
         }
       }
     });
@@ -59,183 +44,105 @@ class _PokemonHomePageState extends State<PokemonHomePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromRGBO(238, 242, 255, 1),
-      body: Stack(
-        children: [
-          CustomScrollView(
-            physics: ClampingScrollPhysics(),
-            controller: _controller,
-            slivers: <Widget>[
-              SliverAppBar(
-                pinned: true,
-                stretch: true,
-                expandedHeight: 160.0,
-                flexibleSpace: FlexibleSpaceBar(
-                  centerTitle: false,
-                  expandedTitleScale: 2,
-                  title: const Text(
-                    'Pokemon',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
+      backgroundColor: const Color.fromRGBO(238, 242, 255, 1),
+      body: OrientationBuilder(
+        builder: (context, orientation) {
+          return Stack(
+            children: [
+              CustomScrollView(
+                physics: const ClampingScrollPhysics(),
+                controller: _controller,
+                slivers: <Widget>[
+                  const SliverAppBar(
+                    pinned: true,
+                    stretch: true,
+                    expandedHeight: 160.0,
+                    flexibleSpace: FlexibleSpaceBar(
+                      centerTitle: false,
+                      expandedTitleScale: 2,
+                      title: Text(
+                        'Pokemon',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      background: _BackgroundStack(),
                     ),
+                    backgroundColor: Color.fromRGBO(238, 242, 255, 1),
                   ),
-                  background: Stack(
-                    children: [
-                      Positioned(
-                        right: -30,
-                        child: Transform.rotate(
-                          angle: -math.pi / 6,
-                          child: Image.asset(
-                            'assets/images/pokeball.png',
-                            color: Colors.black.withOpacity(0.1),
-                            scale: 4,
-                            fit: BoxFit.none,
-                          ),
+                  AnimatedBuilder(
+                    animation: _pokemonListNotifier,
+                    builder: (context, child) {
+                      return SliverGrid(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount:
+                              orientation == Orientation.portrait ? 2 : 4,
+                          mainAxisExtent: 140,
                         ),
-                      ),
-                      Positioned(
-                        left: -50,
-                        top: -100,
-                        child: Transform.rotate(
-                          angle: -math.pi / 3,
-                          child: Image.asset(
-                            'assets/images/pokeball.png',
-                            color: Colors.black.withOpacity(0.1),
-                            scale: 3,
-                            fit: BoxFit.none,
-                          ),
+                        delegate: SliverChildBuilderDelegate(
+                          (BuildContext context, int index) {
+                            return _PokemonCard(
+                              pokemonListModel:
+                                  _pokemonListNotifier.pokemonList[index],
+                              index: index,
+                            );
+                          },
+                          childCount: _pokemonListNotifier.pokemonList.length,
                         ),
-                      ),
-                    ],
+                      );
+                    },
                   ),
-                ),
-                backgroundColor: Color.fromRGBO(238, 242, 255, 1),
+                ],
               ),
               AnimatedBuilder(
-                animation: tes,
-                builder: (context, child) {
-                  return SliverGrid(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisExtent: 140,
+                animation: _pokemonListNotifier,
+                builder: (context, child) => AnimatedPositioned(
+                  bottom: _pokemonListNotifier.isLoading == true ? 0 : -70,
+                  duration: const Duration(milliseconds: 300),
+                  child: Container(
+                    height: 70,
+                    width: MediaQuery.of(context).size.width,
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.transparent,
+                          Colors.black,
+                        ],
+                      ),
                     ),
-                    delegate: SliverChildBuilderDelegate(
-                      (BuildContext context, int index) {
-                        if (index % 2 == 0) {
-                          return Padding(
-                            padding: const EdgeInsets.only(left: 10),
-                            child: card(tes.pokemonList[index], index),
-                          );
-                        } else {
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 10),
-                            child: card(tes.pokemonList[index], index),
-                          );
-                        }
-                      },
-                      childCount: tes.pokemonList.length,
+                    child: const Center(
+                      child: SizedBox(
+                        height: 30,
+                        width: 30,
+                        child: CircularProgressIndicator(),
+                      ),
                     ),
-                  );
-                },
+                  ),
+                ),
               ),
             ],
-          ),
-          AnimatedBuilder(
-            animation: tes,
-            builder: (context, child) => AnimatedPositioned(
-              bottom: tes.isLoading == true ? 0 : -70,
-              child: Container(
-                height: 70,
-                width: MediaQuery.of(context).size.width,
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.transparent,
-                      Colors.black,
-                    ],
-                  ),
-                ),
-                child: Center(
-                  child: SizedBox(
-                    height: 30,
-                    width: 30,
-                    child: CircularProgressIndicator(),
-                  ),
-                ),
-              ),
-              duration: Duration(milliseconds: 300),
-            ),
-          ),
-        ],
-      ),
-      bottomNavigationBar: Container(
-        height: 70,
-        decoration: BoxDecoration(
-          color: Colors.blue,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(15),
-            topRight: Radius.circular(15),
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: EdgeInsets.only(top: 10),
-              height: 50,
-              width: 100,
-              child: Center(
-                child: FaIcon(
-                  FontAwesomeIcons.solidHeart,
-                  color: Colors.grey,
-                  size: 30,
-                ),
-              ),
-            ),
-            Container(
-              // padding: EdgeInsets.only(top: ),
-              height: 60,
-              width: 100,
-              child: Center(
-                child: Image.asset(
-                  'assets/images/pokeball.png',
-                  // color: Colors.black.withOpacity(0.1),
-                  // fit: BoxFit.none,
-                  width: 40,
-                ),
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.only(top: 10),
-              height: 50,
-              width: 100,
-              child: Center(
-                child: FaIcon(
-                  FontAwesomeIcons.solidUser,
-                  color: Colors.grey,
-                  size: 30,
-                ),
-              ),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
+}
 
-  Widget card(PokemonEntity pokemon, int index) {
+class _PokemonCard extends StatelessWidget {
+  const _PokemonCard({
+    required this.pokemonListModel,
+    required this.index,
+  });
+
+  final PokemonListModel pokemonListModel;
+  final int index;
+
+  @override
+  Widget build(BuildContext context) {
     List<Widget> types = [];
-    // for (var typePokemon in pokemon.type) {
-    //   types.add(type(typePokemon));
-    // }
-
-    Color color = grass;
-    double scale = 0;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
@@ -243,7 +150,9 @@ class _PokemonHomePageState extends State<PokemonHomePage>
         onTap: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => PokemonDetailPage(pokemonEntity: pokemon),
+              builder: (context) => PokemonDetailPage(
+                pokemonListModel: pokemonListModel,
+              ),
             ),
           );
         },
@@ -255,17 +164,17 @@ class _PokemonHomePageState extends State<PokemonHomePage>
             right: 5,
           ),
           decoration: BoxDecoration(
-            color: color,
+            color: const Color.fromRGBO(103, 111, 163, 1),
             image: DecorationImage(
               image: CachedNetworkImageProvider(
-                'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png',
+                'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonListModel.id}.png',
               ),
               scale: 2,
               opacity: 0.1,
               alignment: Alignment.center,
               fit: BoxFit.none,
             ),
-            borderRadius: BorderRadius.all(Radius.circular(25)),
+            borderRadius: const BorderRadius.all(Radius.circular(25)),
           ),
           child: Stack(
             children: [
@@ -276,7 +185,7 @@ class _PokemonHomePageState extends State<PokemonHomePage>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: EdgeInsets.only(top: 40),
+                      padding: const EdgeInsets.only(top: 40),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: types,
@@ -284,10 +193,10 @@ class _PokemonHomePageState extends State<PokemonHomePage>
                     ),
                     const SizedBox(width: 60),
                     Hero(
-                      tag: "${pokemon.id}_image",
+                      tag: "${pokemonListModel.id}_image",
                       child: CachedNetworkImage(
                         imageUrl:
-                            'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png',
+                            'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonListModel.id}.png',
                         width: 100,
                       ),
                     ),
@@ -298,10 +207,10 @@ class _PokemonHomePageState extends State<PokemonHomePage>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Hero(
-                    tag: "${pokemon.id}_name",
+                    tag: "${pokemonListModel.id}_name",
                     child: Text(
-                      pokemon.name.toCamelCase(),
-                      style: TextStyle(
+                      pokemonListModel.name.toCamelCase(),
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 25,
                         fontWeight: FontWeight.bold,
@@ -309,9 +218,9 @@ class _PokemonHomePageState extends State<PokemonHomePage>
                       ),
                     ),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Text(
-                    '#${pokemon.id.toString().padLeft(3, '0')}',
+                    '#${pokemonListModel.id.toString().padLeft(3, '0')}',
                     style: TextStyle(
                       color: Colors.white.withOpacity(0.6),
                       fontSize: 20,
@@ -326,30 +235,41 @@ class _PokemonHomePageState extends State<PokemonHomePage>
       ),
     );
   }
+}
 
-  Widget type(String type) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 5),
-      child: Container(
-        width: 50,
-        padding: const EdgeInsets.symmetric(
-          horizontal: 7,
-          vertical: 3,
-        ),
-        child: Text(
-          type,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 8,
+class _BackgroundStack extends StatelessWidget {
+  const _BackgroundStack();
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Positioned(
+          right: -30,
+          child: Transform.rotate(
+            angle: -math.pi / 6,
+            child: Image.asset(
+              'assets/images/pokeball.png',
+              color: Colors.black.withOpacity(0.1),
+              scale: 4,
+              fit: BoxFit.none,
+            ),
           ),
         ),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.3),
-          borderRadius: BorderRadius.all(
-            Radius.circular(30),
+        Positioned(
+          left: -50,
+          top: -100,
+          child: Transform.rotate(
+            angle: -math.pi / 3,
+            child: Image.asset(
+              'assets/images/pokeball.png',
+              color: Colors.black.withOpacity(0.1),
+              scale: 3,
+              fit: BoxFit.none,
+            ),
           ),
         ),
-      ),
+      ],
     );
   }
 }
